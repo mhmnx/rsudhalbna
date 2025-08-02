@@ -1,0 +1,14 @@
+/* src/print-styles.css */
+
+/* Aturan ini hanya untuk menyembunyikan elemen, bukan mengatur halaman */
+@media print {
+    .noPrint {
+        display: none !important;
+    }
+
+    /* Memaksa browser mencetak warna background */
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+}

@@ -1,0 +1,25 @@
+# Dependensi
+/node_modules
+
+# File Build
+/dist
+/build
+
+# File Log
+npm-debug.log*
+yarn-error.log*
+yarn-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# File Konfigurasi Lokal
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# File Editor/IDE
+.vscode/
+.idea/
+.DS_Store

@@ -1,0 +1,59 @@
+.printContainer {
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+}
+
+/* PERBAIKAN: Aturan border sekarang hanya berlaku untuk tabel dengan kelas ini */
+.borderedTable,
+.borderedTable th,
+.borderedTable td {
+    border: 1px solid black !important;
+}
+
+.borderedTable {
+    border-collapse: collapse;
+}
+
+.headerCell {
+    background-color: #e6f0fa !important;
+    font-weight: bold;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.contentCell {
+    background-color: #e6f0fa !important;
+}
+
+.noPrint {
+    /* Defaultnya terlihat */
+}
+
+@media print {
+    body {
+        background-color: #fff;
+    }
+
+    .noPrint {
+        display: none !important;
+    }
+
+    /* --- TAMBAHKAN ATURAN BARU DI SINI --- */
+    .borderedTable thead,
+    .borderedTable tfoot {
+        display: table-row-group;
+    }
+    /* ------------------------------------ */
+
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    
+    @page {
+        size: A4 landscape;
+        margin: 1.5cm;
+    }
+}
+
