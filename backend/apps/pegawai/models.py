@@ -69,7 +69,13 @@ class Pegawai(AbstractUser):
     pangkat_gol_ruang = models.CharField(max_length=50, blank=True, null=True)
     role = models.CharField(max_length=10, choices=Role.choices, default=Role.PEGAWAI)
     jabatan = models.ForeignKey(Jabatan, on_delete=models.SET_NULL, null=True, blank=True, related_name='pegawai_list')
-
+    nik = models.CharField(max_length=16, blank=True, null=True)
+    penempatan_awal = models.CharField(max_length=255, blank=True, null=True)
+    jenis_pegawai = models.CharField(max_length=50, blank=True, null=True) # Contoh: PNS, BLUD, THL
+    status_kepegawaian = models.CharField(max_length=50, default='Aktif', blank=True, null=True) # Contoh: Aktif, Cuti, Pensiun
+    status_perkawinan = models.CharField(max_length=50, blank=True, null=True) # Contoh: Kawin, Belum Kawin
+    pendidikan_terakhir = models.CharField(max_length=50, blank=True, null=True) # Contoh: S1, S2
+    alamat = models.TextField(blank=True, null=True)
 
     # Relasi
     unit_kerja = models.ForeignKey('UnitKerja', on_delete=models.SET_NULL, null=True, blank=True, related_name='anggota_list')

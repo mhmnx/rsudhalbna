@@ -552,39 +552,26 @@ class EvaluasiPerilakuViewSet(viewsets.ModelViewSet):
 
 class KinerjaPegawaiAPIView(APIView):
     """
-    API View publik untuk mengambil data kinerja pegawai berdasarkan NIP, Tahun, dan Bulan (opsional).
+    API Publik untuk melihat kienerja pegawai
     """
-    # Izinkan akses tanpa token
     permission_classes = [permissions.AllowAny]
 
     def get(self, request, nip, year, month=None):
         try:
-            # 1. Cari pegawai berdasarkan NIP
             pegawai = Pegawai.objects.get(nip=nip)
-
-            # 2. Cari SKP yang relevan untuk tahun tersebut
             skp = SKP.objects.get(
                 pegawai=pegawai,
                 periode_awal__year=year,
-                status='Persetujuan' # Hanya tampilkan SKP yang sudah final
+                status='Persetujuan'
             )
 
-            # 3. Filter penilaian bulanan jika parameter bulan diberikan
-            if month:
-                penilaian_bulanan = skp.periode_penilaian_list.filter(tanggal_awal__month=month)
-                # Kita perlu cara untuk menyajikan ini, mari kita modifikasi serializer-nya
-                # Untuk sementara, kita akan override data di sini
-                serializer = KinerjaTahunanPublicSerializer(skp)
-                data = serializer.data
+            # Siapkan context untuk dikirim ke serializer
+            serializer_context = {
+                'request': request,
+                'month': month # Kirim 'month' dari URL ke context
+            }
 
-                # Filter data penilaian bulanan di dalam hasil serialisasi
-                filtered_penilaian = [p for p in data['penilaian_bulanan'] if datetime.datetime.strptime(p['nama_periode'], '%B %Y').month == month]
-                data['penilaian_bulanan'] = filtered_penilaian
-
-                return Response(data)
-
-            # Jika tidak ada parameter bulan, kembalikan data tahunan lengkap
-            serializer = KinerjaTahunanPublicSerializer(skp)
+            serializer = KinerjaTahunanPublicSerializer(skp, context=serializer_context)
             return Response(serializer.data)
 
         except Pegawai.DoesNotExist:
@@ -627,7 +614,7 @@ class DashboardStatsView(APIView):
         # Ambil parameter bulan (opsional)
         month = request.query_params.get('month')
 
-        pegawai_filtered_qs = Pegawai.objects.filter(pangkat_gol_ruang__in=['BLUD', 'THL'])
+        pegawai_filtered_qs = Pegawai.objects.filter(jenis_pegawai__in=['BLUD', 'THL'])
 
         total_pegawai = pegawai_filtered_qs.count()
         total_skp_tahunan = SKP.objects.filter(
@@ -714,7 +701,7 @@ class MonitoringPegawaiView(APIView):
         if not year or not month:
             return Response({'error': 'Parameter `year` dan `month` wajib diisi.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        pegawai_qs = Pegawai.objects.filter(pangkat_gol_ruang__in=['BLUD', 'THL'])
+        pegawai_qs = Pegawai.objects.filter(jenis_pegawai__in=['BLUD', 'THL'])
         #pegawai_qs = Pegawai.objects.all()
         if unit_kerja_id:
             pegawai_qs = pegawai_qs.filter(unit_kerja_id=unit_kerja_id)
@@ -732,20 +719,22 @@ class MonitoringPegawaiView(APIView):
                 serializer = PeriodePenilaianSerializer(periode) # Gunakan serializer sederhana
                 sudah_mengisi = serializer.get_is_ready_for_assessment(periode)
                 sudah_dinilai = bool(periode.predikat_kinerja)
-
+                predikat_kinerja = periode.predikat_kinerja or '-'
             except PeriodePenilaian.DoesNotExist:
                 sudah_mengisi = False
                 sudah_dinilai = False
-
+                predikat_kinerja = '-'
+            
             response_data.append({
                 'id': pegawai.id,
                 'nama_lengkap': pegawai.nama_lengkap,
                 'nip': pegawai.nip,
                 'jabatan': pegawai.jabatan.nama_jabatan if pegawai.jabatan else '-',
                 'sudah_mengisi': sudah_mengisi,
-                'sudah_dinilai': sudah_dinilai
+                'sudah_dinilai': sudah_dinilai,
+                'predikat_kinerja': predikat_kinerja # <-- Tambahkan ke respons
             })
-
+        
         return Response(response_data)
 
 class ExportMonitoringExcelView(APIView):
@@ -760,7 +749,7 @@ class ExportMonitoringExcelView(APIView):
             return Response({'error': 'Parameter `year` dan `month` wajib diisi.'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Query data pegawai (sama seperti di MonitoringPegawaiView)
-        pegawai_qs = Pegawai.objects.filter(pangkat_gol_ruang__in=['BLUD', 'THL'])
+        pegawai_qs = Pegawai.objects.filter(jenis_pegawai__in=['BLUD', 'THL'])
         if unit_kerja_id:
             pegawai_qs = pegawai_qs.filter(unit_kerja_id=unit_kerja_id)
         
@@ -772,7 +761,7 @@ class ExportMonitoringExcelView(APIView):
         # Buat Header
         headers = [
             "Nama Pegawai", "NIP", "Jabatan", "Unit Kerja", 
-            "Status Pengisian", "Status Penilaian"
+            "Status Pengisian", "Status Penilaian", "Predikat Kinerja" # <-- Tambah kolom
         ]
         sheet.append(headers)
 
@@ -790,6 +779,7 @@ class ExportMonitoringExcelView(APIView):
             except PeriodePenilaian.DoesNotExist:
                 sudah_mengisi = "Belum"
                 sudah_dinilai = "Belum"
+                predikat_kinerja = '-'
             
             row_data = [
                 pegawai.nama_lengkap,
@@ -797,7 +787,8 @@ class ExportMonitoringExcelView(APIView):
                 pegawai.jabatan.nama_jabatan if pegawai.jabatan else '-',
                 pegawai.unit_kerja.nama_unit if pegawai.unit_kerja else '-',
                 sudah_mengisi,
-                sudah_dinilai
+                sudah_dinilai,
+                predikat_kinerja # <-- Tambah data ke baris
             ]
             sheet.append(row_data)
         
@@ -827,7 +818,7 @@ class AtasanDashboardView(APIView):
         # --- PERBAIKAN DI SINI ---
         # Ambil semua bawahan, lalu filter hanya yang BLUD dan THL
         bawahan = user.bawahan_list.filter(
-            pangkat_gol_ruang__in=['BLUD', 'THL']
+            jenis_pegawai__in=['BLUD', 'THL']
         ).order_by('nama_lengkap')
         
         serializer = AtasanDashboardBawahanSerializer(bawahan, many=True)

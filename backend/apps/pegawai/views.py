@@ -11,6 +11,7 @@ from .models import Pegawai, UnitKerja, Bidang, Jabatan
 from .serializers import PegawaiSerializer, UnitKerjaSerializer, BidangSerializer, JabatanSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import MyTokenObtainPairSerializer
+from .serializers import PegawaiSerializer, PublicPegawaiSerializer
 from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
 import logging
@@ -134,3 +135,27 @@ class SSOLoginView(APIView):
             'refresh': str(refresh),
             'access': str(refresh.access_token),
         })
+
+class PublicPegawaiView(APIView):
+    """
+    API untuk data pegawai.
+    """
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request, nip=None):
+        if nip:
+            try:
+                pegawai = Pegawai.objects.get(nip=nip)
+                # Gunakan serializer publik yang baru
+                serializer = PublicPegawaiSerializer(pegawai)
+                return Response(serializer.data)
+            except Pegawai.DoesNotExist:
+                return Response(
+                    {'error': 'Pegawai dengan NIP tersebut tidak ditemukan.'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+        else:
+            pegawai_list = Pegawai.objects.all().order_by('nama_lengkap')
+            # Gunakan serializer publik yang baru
+            serializer = PublicPegawaiSerializer(pegawai_list, many=True)
+            return Response(serializer.data)

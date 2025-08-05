@@ -10,8 +10,8 @@ from apps.pegawai.models import Pegawai
 
 
 RATING_CHOICES = ['Di Atas Ekspektasi', 'Sesuai Ekspektasi', 'Di Bawah Ekspektasi']
-PREDIKAT_CHOICES = ['Sangat Baik', 'Baik', 'Butuh Perbaikan', 'Kurang / Misconduct', 'Sangat Kurang']
-FEEDBACK_CHOICES = ['Sangat Baik', 'Baik', 'Perlu Perbaikan', 'Kurang', 'Sangat Kurang']
+PREDIKAT_CHOICES = ['Baik', 'Butuh Perbaikan', 'Kurang', 'Sangat Kurang']
+FEEDBACK_CHOICES = ['Baik', 'Perlu Perbaikan', 'Kurang', 'Sangat Kurang']
 
 
 
@@ -416,13 +416,11 @@ class KinerjaBulananPublicSerializer(serializers.ModelSerializer):
 class KinerjaTahunanPublicSerializer(serializers.ModelSerializer):
     """
     Serializer utama untuk API publik, menampilkan data SKP tahunan
-    beserta rincian penilaian bulanannya.
+    beserta rincian penilaian bulanannya yang sudah difilter.
     """
     pegawai = PegawaiSerializer(read_only=True)
-    # Menggunakan serializer di atas untuk menampilkan rincian bulanan
-    penilaian_bulanan = KinerjaBulananPublicSerializer(
-        source='periode_penilaian_list', many=True, read_only=True
-    )
+    # PERBAIKAN 1: Ubah field ini menjadi SerializerMethodField
+    penilaian_bulanan = serializers.SerializerMethodField()
 
     class Meta:
         model = SKP
@@ -430,6 +428,24 @@ class KinerjaTahunanPublicSerializer(serializers.ModelSerializer):
             'id', 'pegawai', 'periode_awal', 'periode_akhir',
             'pendekatan', 'status', 'penilaian_bulanan'
         ]
+
+    # PERBAIKAN 2: Tambahkan metode ini untuk mengisi data penilaian_bulanan
+    def get_penilaian_bulanan(self, obj):
+        """
+        Metode ini akan memfilter daftar periode penilaian
+        berdasarkan 'month' yang dikirim dari view.
+        """
+        queryset = obj.periode_penilaian_list.all()
+
+        # Ambil 'month' dari context yang dikirim oleh view
+        month = self.context.get('month')
+
+        if month:
+            # Jika ada 'month', filter queryset-nya
+            queryset = queryset.filter(tanggal_awal__month=month)
+
+        # Gunakan KinerjaBulananPublicSerializer untuk serialize data yang sudah difilter
+        return KinerjaBulananPublicSerializer(queryset, many=True).data
         
 class AtasanDashboardBawahanSerializer(serializers.ModelSerializer):
     """

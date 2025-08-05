@@ -31,7 +31,7 @@ schema_view = get_schema_view(
       title="SPEKTA API",
       default_version='v1',
       description="Dokumentasi API untuk aplikasi SPEKTA (Sistem Penilaian Kinerja Staf)",
-      contact=openapi.Contact(email="contact@rsud.go.id"),
+      contact=openapi.Contact(email="alfa.azkiya@gmail.com"),
       license=openapi.License(name="BSD License"),
    ),
    public=True,
@@ -67,5 +67,7 @@ urlpatterns = [
     #
     path('kinerja/', include('apps.spekta.urls_public')),
     path('preview/<str:nip>/<int:year>/<int:month>/', PublicPrintRedirectView.as_view(), name='public-periode-detail'),
+    
+    path('pegawai/pegawai/', include('apps.pegawai.urls_public')),
 
 ]

@@ -33,11 +33,15 @@ class PegawaiAdmin(UserAdmin):
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         ('Informasi Personal', {'fields': (
-            'nip', 'nama_lengkap', 'gelar_depan', 'gelar_belakang', 
-            # Tambahkan 'jabatan' ke form edit
-            'jabatan', 'pangkat_gol_ruang', 'tempat_lahir', 'tanggal_lahir', 'jenis_kelamin'
+            'nip', 'nama_lengkap', 'gelar_depan', 'gelar_belakang', 'nik',
+            'status_perkawinan', 'alamat'
         )}),
-        ('Struktur & Role Aplikasi', {'fields': ('unit_kerja', 'atasan_langsung', 'role')}),
+        ('Informasi Kepegawaian', {'fields': (
+            'jabatan', 'pangkat_gol_ruang', 'unit_kerja', 'penempatan_awal', 
+            'jenis_pegawai', 'status_kepegawaian', 'pendidikan_terakhir'
+        )}),
+        ('Struktur & Role Aplikasi', {'fields': ('atasan_langsung', 'role')}),
+        ('Hak Akses Sistem', {'fields': ('is_active', 'is_staff', 'is_superuser')}),
         ('Tanggal Penting', {'fields': ('last_login', 'date_joined')}),
     )
 
