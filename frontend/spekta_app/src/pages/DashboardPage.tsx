@@ -1,8 +1,8 @@
 // src/pages/DashboardPage.tsx
 import { useEffect, useState, useCallback } from 'react';
-import { Title, Text, Paper, SimpleGrid, Card, Group, Badge, Loader, Button, Alert } from '@mantine/core';
+import { Title, Text, Paper, SimpleGrid, Group, Badge, Loader, Button, Alert } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { useAuth } from '../context/AuthContext';
+
 import { fetchPegawaiDashboardData, DashboardData } from '../api/skpService';
 import { IconAlertCircle, IconCircleCheck } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
@@ -20,7 +20,7 @@ const getStatusColor = (status: string) => {
 
 
 export function DashboardPage() {
-    const { user } = useAuth();
+
     const navigate = useNavigate();
     const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
     const [loading, setLoading] = useState(true);

@@ -89,48 +89,71 @@ class JabatanViewSet(viewsets.ModelViewSet):
 
         return super().list(request, *args, **kwargs)
     
-class SSOLoginView(APIView):
+class SSOVerifyTokenView(APIView):
     """
-    View untuk menangani login via SSO.
-    Menerima token dari frontend, memvalidasinya ke server SSO,
-    dan mengembalikan token JWT internal jika valid.
+    Menerima token dari aplikasi induk, memvalidasinya, menyinkronkan data pegawai,
+    dan mengembalikan token JWT internal SPEKTA.
     """
-    # Tidak memerlukan autentikasi untuk mengakses view ini
-    permission_classes = [] 
+    permission_classes = [permissions.AllowAny] # Siapapun boleh mengakses endpoint ini
 
     def post(self, request, *args, **kwargs):
-        sso_token = request.data.get('token')
-        if not sso_token:
+        parent_token = request.data.get('token')
+        if not parent_token:
+            return Response({'error': 'Token tidak disediakan.'}, status=status.HTTP_400_BAD_REQUEST)
 
-            return Response({'error': 'Token SSO tidak ditemukan.'}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Langkah 1: Validasi token ke server SSO eksternal
+        # 1. Validasi token ke server aplikasi induk
         try:
-            validation_response = requests.post(
-                settings.SSO_VALIDATE_TOKEN_URL, 
-                json={'token': sso_token}
+            headers = {'Authorization': f'Bearer {parent_token}'}
+            verify_url = settings.PARENT_APP_VERIFY_TOKEN_URL
+            response = requests.post(verify_url, headers=headers)
+            response.raise_for_status() # Error jika status bukan 2xx
+            sso_data = response.json()['response']['response']
+
+        except requests.exceptions.RequestException as e:
+            return Response({'error': 'Token tidak valid atau server induk tidak merespons.', 'details': str(e)}, status=status.HTTP_401_UNAUTHORIZED)
+
+        # 2. Sinkronisasi data pegawai (get or create)
+        nip = sso_data.get('nip')
+        if not nip:
+            return Response({'error': 'Data NIP tidak ditemukan dari token.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Logika get_or_create untuk Unit Kerja & Jabatan (sama seperti sync_pegawai)
+        default_bidang, _ = Bidang.objects.get_or_create(nama_bidang='Belum Diatur')
+        unit_kerja_obj, _ = UnitKerja.objects.get_or_create(
+            nama_unit__iexact=sso_data.get('unitkerja').strip(),
+            defaults={'nama_unit': sso_data.get('unitkerja').strip(), 'bidang': default_bidang}
+        )
+        jabatan_obj, _ = Jabatan.objects.get_or_create(
+            nama_jabatan__iexact=sso_data.get('jabatan').strip(),
+            defaults={'nama_jabatan': sso_data.get('jabatan').strip()}
+        )
+
+        pegawai_obj, created = Pegawai.objects.update_or_create(
+                nip=nip,
+                defaults={
+                    'nama_lengkap': sso_data.get('nama'),
+                    'gelar_depan': sso_data.get('gelarDepan'),
+                    'gelar_belakang': sso_data.get('gelarBelakang', '').replace(', ', ''), # Menghapus koma
+                    'email': f"{nip}@rsud.spekta.local", # Email placeholder
+                    'pangkat_gol_ruang': sso_data.get('golongan'),
+                    'jabatan': jabatan_obj,
+                    'unit_kerja': unit_kerja_obj,
+                    'penempatan_awal': sso_data.get('penempatanAwal'),
+                    'jenis_pegawai': sso_data.get('jenisPegawai'),
+                    'status_kepegawaian': sso_data.get('status'),
+                    'status_perkawinan': sso_data.get('stskawin'),
+                    'pendidikan_terakhir': sso_data.get('pendidikan'),
+                    'alamat': sso_data.get('alamat', '').strip(), # Menghapus spasi/tab berlebih
+                }
             )
-            validation_response.raise_for_status() # Error jika status bukan 2xx
 
-            sso_user_data = validation_response.json()
-            # Pastikan API SSO mengembalikan NIP dalam responsnya
-            nip_pegawai = sso_user_data.get('nip')
+        if created:
+            pegawai_obj.set_password(nip) # Set NIP sebagai password default
+            pegawai_obj.save()
 
-            if not nip_pegawai:
-
-                return Response({'error': 'Data NIP tidak ditemukan dari token SSO.'}, status=status.HTTP_400_BAD_REQUEST)
-        except requests.exceptions.RequestException:
-            
-            return Response({'error': 'Token SSO tidak valid atau server SSO tidak merespons.'}, status=status.HTTP_401_UNAUTHORIZED)
-
-        try:
-            pegawai = Pegawai.objects.get(nip=nip_pegawai)
-
-        except Pegawai.DoesNotExist:
-            
-            return Response({'error': f'Pegawai dengan NIP {nip_pegawai} tidak ditemukan di sistem ini.'}, status=status.HTTP_404_NOT_FOUND)
-
-        refresh = RefreshToken.for_user(pegawai)
+        # 3. Buat token JWT internal SPEKTA untuk pegawai ini
+        refresh = RefreshToken.for_user(pegawai_obj)
+        
         return Response({
             'refresh': str(refresh),
             'access': str(refresh.access_token),

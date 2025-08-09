@@ -1,8 +1,8 @@
 // src/components/AppLayout.tsx
 import React from 'react';
-import { AppShell, Burger, Group, NavLink, Menu, Button, Text, MenuDropdown } from '@mantine/core';
+import { AppShell, Burger, Group, NavLink, Menu, Button, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconGauge, IconFileText, IconUsers, IconLogout, IconSettings, IconChecklist, IconFileTextSpark, IconUserStar } from '@tabler/icons-react';
+import { IconGauge, IconFileText, IconUsers, IconLogout, IconSettings, IconChecklist, IconFileTextSpark } from '@tabler/icons-react';
 import { NavLink as RouterNavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext'; // Impor hook auth kita
 import { Footer } from './Footer';

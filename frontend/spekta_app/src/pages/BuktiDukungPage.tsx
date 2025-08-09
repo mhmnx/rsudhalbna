@@ -1,6 +1,6 @@
 // src/pages/BuktiDukungPage.tsx
 import { useEffect, useState, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { Title, Paper, Loader, Text, Group, Button, Table, List, ActionIcon, Tooltip, Anchor } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { useDisclosure } from '@mantine/hooks';
@@ -8,7 +8,7 @@ import * as skpService from '../api/skpService';
 import { useAuth } from '../context/AuthContext';
 import { RealisasiModal } from '../components/penilaian/RealisasiModal';
 import { BuktiDukungModal } from '../components/penilaian/BuktiDukungModal';
-import { IconEdit, IconTrash, IconPlus, IconMessageDots } from '@tabler/icons-react';
+import { IconEdit, IconTrash, IconMessageDots } from '@tabler/icons-react';
 import { RatingModal } from '../components/penilaian/RatingModal';
 import { FeedbackModal } from '../components/penilaian/FeedbackModal';
 import { Box, Grid } from '@mantine/core';
@@ -19,7 +19,6 @@ import { AtasanCatatanForm } from '../components/penilaian/AtasanCatatanForm'; /
 
 export function BuktiDukungPage() {
     const { periodeId } = useParams<{ periodeId: string }>();
-    const navigate = useNavigate();
     const { user } = useAuth();
     const [periodeDetail, setPeriodeDetail] = useState<skpService.PeriodePenilaianDetail | null>(null);
     const [loading, setLoading] = useState(true);
@@ -269,7 +268,7 @@ export function BuktiDukungPage() {
                 onSubmit={handleRatingSubmit}
                 title="Edit Predikat Kinerja Pegawai"
                 fieldName="predikat_kinerja" // Pastikan ini benar
-                data={['Sangat Baik', 'Baik', 'Butuh Perbaikan', 'Kurang', 'Sangat Kurang']}
+                data={['Baik', 'Butuh Perbaikan', 'Kurang', 'Sangat Kurang']}
                 // PERBAIKI PROPERTI DI BAWAH INI
                 initialValue={periodeDetail.predikat_kinerja || ''}
             />

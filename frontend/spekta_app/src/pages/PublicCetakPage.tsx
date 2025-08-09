@@ -1,9 +1,9 @@
 // src/pages/PublicCetakPage.tsx
 import { useEffect, useState, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Title, Paper, Loader, Text, Group, Button, Table, Container } from '@mantine/core';
+import { useParams } from 'react-router-dom';
+import { Title, Loader, Text, Group, Table, Container } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { fetchPeriodePenilaianDetail, PeriodePenilaianDetail } from '../api/skpService';
+import { PeriodePenilaianDetail } from '../api/skpService';
 import classes from './CetakPenilaianPage.module.css';
 import React from 'react';
 import { List } from '@mantine/core';
@@ -30,7 +30,6 @@ export function PublicCetakPage() {
         // --- LENGKAPI BAGIAN INI ---
         // Mengambil parameter nip, year, dan month dari URL
         const { nip, year, month } = useParams<{ nip: string, year: string, month: string }>();
-        const navigate = useNavigate();
         const [periodeDetail, setPeriodeDetail] = useState<PeriodePenilaianDetail | null>(null);
         const [loading, setLoading] = useState(true);
     
@@ -68,9 +67,6 @@ export function PublicCetakPage() {
     const rhkUtama = skp.rhk_list.filter(rhk => rhk.jenis_rhk === 'Utama');
     const rhkTambahan = skp.rhk_list.filter(rhk => rhk.jenis_rhk === 'Tambahan');
 
-    const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
-    const periodeMulai = new Date(periodeDetail.tanggal_awal).toLocaleDateString('id-ID', options).toUpperCase();
-    const periodeSelesai = new Date(periodeDetail.tanggal_akhir).toLocaleDateString('id-ID', options).toUpperCase();
     
     // Format khusus untuk header periode
     const periodeHeaderMulai = new Date(periodeDetail.tanggal_awal).toLocaleDateString('id-ID', { day: 'numeric', month: 'long' }).toUpperCase();

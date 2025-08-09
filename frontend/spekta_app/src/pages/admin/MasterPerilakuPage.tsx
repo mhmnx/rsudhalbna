@@ -1,7 +1,6 @@
 // src/pages/admin/MasterPerilakuPage.tsx
 import { useState, useEffect } from 'react';
 import { Table, Button, Title, Paper, Group, ActionIcon, Tooltip } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
 import { IconEdit, IconTrash, IconPlus } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { fetchMasterPerilaku, MasterPerilaku } from '../../api/masterDataService';

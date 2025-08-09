@@ -2,11 +2,9 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Title, Loader, Text, Paper, Table } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { useAuth } from '../context/AuthContext';
 import { fetchMyTeam, TimKerjaData } from '../api/pegawaiService';
 
 export function TimKerjaPage() {
-    const { user } = useAuth();
     const [timKerjaData, setTimKerjaData] = useState<TimKerjaData | null>(null);
     const [loading, setLoading] = useState(true);
 

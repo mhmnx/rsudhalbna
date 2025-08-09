@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 // PERBAIKAN: Tambahkan 'Tooltip' ke dalam import
-import { Title, Paper, Loader, Text, Badge, Group, Button, Table, ActionIcon, Collapse, Grid, Tooltip, List, Alert } from '@mantine/core';
+import { Title, Paper, Loader, Text, Badge, Group, Button, Table, ActionIcon, Grid, Tooltip, List, Alert } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { useAuth } from '../context/AuthContext';
 import * as skpService from '../api/skpService';
 import { RhkModal } from '../components/skp/RhkModal';
 import { IndikatorModal } from '../components/skp/IndikatorModal';
-import { IconChevronDown, IconEdit, IconTrash, IconPlus } from '@tabler/icons-react';
+import { IconEdit, IconTrash, IconPlus } from '@tabler/icons-react';
 import { EkspektasiModal } from '../components/skp/EkspektasiModal';
 import { LampiranModal } from '../components/skp/LampiranModal';
 import React from 'react';
@@ -150,17 +150,7 @@ export function SkpDetailPage() {
         }
     };
 
-    const handleDeleteIndikator = async (id: number) => {
-        if (window.confirm('Apakah Anda yakin ingin menghapus Indikator ini?')) {
-            try {
-                await skpService.deleteIndikator(id);
-                notifications.show({ color: 'green', message: 'Indikator berhasil dihapus.' });
-                fetchData(); // Muat ulang data
-            } catch (error) {
-                notifications.show({ color: 'red', message: 'Gagal menghapus Indikator.' });
-            }
-        }
-    };
+
 
     const handleEkspektasiSubmit = async (values: { ekspektasi_khusus: string }) => {
         if (!editingPerilaku) return;

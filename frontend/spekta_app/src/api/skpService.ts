@@ -24,10 +24,17 @@ export interface PegawaiSimple {
     nama_lengkap: string;
     nama_lengkap_gelar: string;
     nip: string;
-    pangkat_gol_ruang: string;
-    // Pastikan formatnya adalah objek
+    pangkat_gol_ruang: string | null;
     jabatan: { nama_jabatan: string } | null; 
     unit_kerja: { nama_unit: string } | null;
+    // Tambahkan field baru
+    nik: string | null;
+    penempatan_awal: string | null;
+    jenis_pegawai: string | null;
+    status_kepegawaian: string | null;
+    status_perkawinan: string | null;
+    pendidikan_terakhir: string | null;
+    alamat: string | null;
 }
 
 export interface PerilakuKerja {

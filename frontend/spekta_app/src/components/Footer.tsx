@@ -1,5 +1,5 @@
 // src/components/Footer.tsx
-import { Text, Group, Anchor } from '@mantine/core';
+import { Text, Group } from '@mantine/core';
 
 export function Footer() {
   return (

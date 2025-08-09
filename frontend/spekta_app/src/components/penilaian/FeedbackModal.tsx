@@ -21,7 +21,7 @@ export function FeedbackModal({ opened, onClose, onSubmit, initialData }: Props)
                     label="Feedback"
                     placeholder="Pilih feedback untuk rencana aksi ini"
                     required
-                    data={['Sangat Baik', 'Baik', 'Perlu Perbaikan', 'Kurang', 'Sangat Kurang']}
+                    data={['Baik', 'Perlu Perbaikan', 'Kurang', 'Sangat Kurang']}
                     {...form.getInputProps('feedback_atasan')}
                 />
                 <Button type="submit" mt="md" fullWidth>Simpan Feedback</Button>

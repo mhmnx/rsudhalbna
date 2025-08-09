@@ -1,5 +1,4 @@
 // src/components/Cetak/PrintStyles.tsx
-import React from 'react';
 
 const landscapeCss = `
   @media print {

@@ -1,5 +1,5 @@
 // src/pages/CetakEvaluasiPage.tsx
-import React, { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Title, Loader, Text, Group, Button, Table, Container } from '@mantine/core';
 import { notifications } from '@mantine/notifications';

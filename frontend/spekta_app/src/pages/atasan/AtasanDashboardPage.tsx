@@ -1,6 +1,6 @@
 // src/pages/atasan/AtasanDashboardPage.tsx
 import { useEffect, useState, useCallback } from 'react';
-import { Title, Loader, Text, Paper, Table, Group, Button } from '@mantine/core';
+import { Title, Loader, Text, Paper, Table, Button } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { useNavigate } from 'react-router-dom';
 import { fetchAtasanDashboardData, BawahanDashboard } from '../../api/atasanService';

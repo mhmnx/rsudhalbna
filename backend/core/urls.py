@@ -24,7 +24,7 @@ from apps.spekta.views import PublicPrintRedirectView
 # Impor View kustom kita
 from rest_framework_simplejwt.views import TokenRefreshView
 # Impor View kustom kita
-from apps.pegawai.views import MyTokenObtainPairView, SSOLoginView
+from apps.pegawai.views import MyTokenObtainPairView, SSOVerifyTokenView
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -49,7 +49,8 @@ urlpatterns = [
     # URL Autentikasi
     path('api/v1/auth/token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/v1/auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/v1/auth/sso-login/', SSOLoginView.as_view(), name='sso_login'), # <-- TAMBAHKAN PATH INI
+    path('api/v1/auth/sso/verify/', SSOVerifyTokenView.as_view(), name='sso_verify_token'),
+    
 
     # URL Aplikasi
     path('api/v1/pegawai/', include('apps.pegawai.urls')),

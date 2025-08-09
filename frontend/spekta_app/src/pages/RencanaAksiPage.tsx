@@ -8,8 +8,7 @@ import { useAuth } from '../context/AuthContext';
 import * as skpService from '../api/skpService';
 import { RencanaAksiModal } from '../components/skp/RencanaAksiModal';
 import { IconPlus, IconEdit, IconTrash } from '@tabler/icons-react';
-import { fetchSkpById } from '../api/skpService';
-import { fetchPeriodePenilaianDetail, PeriodePenilaianDetail, RencanaAksi as RencanaAksiType, RencanaAksiPayload, createRencanaAksi, updateRencanaAksi, deleteRencanaAksi } from '../api/skpService';
+import { fetchPeriodePenilaianDetail, PeriodePenilaianDetail } from '../api/skpService';
 
 
 const ProfileBox = ({ title, pegawai }: { title: string, pegawai: skpService.PegawaiSimple | null }) => {
@@ -127,10 +126,6 @@ export function RencanaAksiPage() {
     const { skp } = periodeDetail; // Ambil skp dari periodeDetail
     const canManageAksi = skp.status === 'Persetujuan' && Number(skp.pegawai.id) === Number(user?.user_id);
 
-    const namaPeriodeIndonesia = new Date(periodeDetail.tanggal_awal).toLocaleDateString('id-ID', {
-        month: 'long',
-        year: 'numeric'
-    });
 
     return (
         <>

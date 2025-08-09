@@ -21,6 +21,7 @@ export interface MonitoringData {
     jabatan: string;
     sudah_mengisi: boolean;
     sudah_dinilai: boolean;
+    predikat_kinerja: string;
 }
 
 export interface Bidang {

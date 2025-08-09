@@ -260,3 +260,5 @@ LOGGING = {
 # Konfigurasi untuk django-log-viewer
 LOG_VIEWER_FILES = ['pegawai.log', 'spekta.log']
 LOG_VIEWER_FILES_DIR = LOGS_DIR
+
+PARENT_APP_VERIFY_TOKEN_URL = os.environ.get('PARENT_APP_VERIFY_TOKEN_URL')

@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { Title, Paper, SimpleGrid, Text, Loader, Group, Select, Table, Badge } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { fetchDashboardStats, fetchMonitoringData, DashboardStats, MonitoringData } from '../../api/masterDataService';
-import { fetchUnitKerjaList, UnitKerja } from '../../api/pegawaiService';
+import { fetchUnitKerjaList } from '../../api/pegawaiService';
 import { IconFileExport } from '@tabler/icons-react';
 import { Button } from '@mantine/core';
 import { fetchBidangList } from '../../api/masterDataService';
@@ -176,6 +176,10 @@ export function AdminDashboardPage() {
                     {item.sudah_dinilai ? 'Sudah' : 'Belum'}
                 </Badge>
             </Table.Td>
+            <Table.Td>
+                <Badge color='green'>
+                    {item.predikat_kinerja}
+                </Badge></Table.Td>
         </Table.Tr>
     ));
 
@@ -214,6 +218,7 @@ export function AdminDashboardPage() {
                             <Table.Th>Jabatan</Table.Th>
                             <Table.Th>Status Pengisian</Table.Th>
                             <Table.Th>Status Penilaian</Table.Th>
+                            <Table.Th>Predikat Kinerja</Table.Th>
                         </Table.Tr>
                     </Table.Thead>
                     <Table.Tbody>{loading ? <Table.Tr><Table.Td colSpan={5} ta="center"><Loader /></Table.Td></Table.Tr> : monitoringRows}</Table.Tbody>
