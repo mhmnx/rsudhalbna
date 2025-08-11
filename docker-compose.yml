@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    container_name: spekta_backend
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8001:8000" # Map port 8000 di kontainer ke port 8001 di server
+    env_file:
+      - ./backend/.env # Muat environment variables dari file .env
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend/spekta_app
+    container_name: spekta_frontend
+    ports:
+      - "3000:80" # Map port 80 di kontainer ke port 3000 di server
+    restart: unless-stopped

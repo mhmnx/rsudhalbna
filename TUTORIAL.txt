@@ -1,0 +1,25 @@
+BACKEND:
+C:\nssm-2.24\win64>nssm install SpektaBackend
+	path: venv waiters
+	--host=0.0.0.0 --port=8001 core.wsgi:application
+
+FRONTEND:
+
+npm run dev
+	copy web.config
+
+C:\inetpub\wwwroot\spekta_app>serve -s dist -l 3000
+
+
+
+SPEKTA:
+
+frontend: 3000
+backend:  8001
+aplikasinya : 1000
+
+LAMARAN:
+
+frontend: 3001
+backend:  8002
+aplikasinya : 1001
