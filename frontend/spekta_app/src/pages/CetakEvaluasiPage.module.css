@@ -1,0 +1,29 @@
+/* src/pages/CetakEvaluasiPage.module.css */
+.printContainer {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 12pt;
+}
+
+.tableCustom,
+.tableCustom th,
+.tableCustom td {
+    border: 1px solid black !important;
+    padding: 0.25rem 0.5rem;
+    vertical-align: top;
+}
+
+.headerRow {
+    background-color: #e6f0fa !important;
+    font-weight: bold;
+}
+
+.noPrint { /* ... */ }
+
+@media print {
+    .noPrint { display: none !important; }
+    @page { size: A4 portrait; margin: 2cm; }
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+}
