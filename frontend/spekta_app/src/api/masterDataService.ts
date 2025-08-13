@@ -29,6 +29,13 @@ export interface Bidang {
     nama_bidang: string;
 }
 
+
+
+export interface MasterPerilakuPayload {
+    jenis_perilaku: string;
+    uraian_perilaku: string;
+}
+
 // --- FUNGSI API ---
 
 
@@ -52,5 +59,10 @@ export const fetchMonitoringData = async (filters: { unit_kerja?: number, year: 
 
 export const fetchBidangList = async (): Promise<Bidang[]> => {
     const response = await axiosInstance.get('/pegawai/bidang/');
+    return response.data;
+};
+
+export const createMasterPerilaku = async (data: MasterPerilakuPayload): Promise<MasterPerilaku> => {
+    const response = await axiosInstance.post('/admin/kinerja/master-perilaku/', data);
     return response.data;
 };

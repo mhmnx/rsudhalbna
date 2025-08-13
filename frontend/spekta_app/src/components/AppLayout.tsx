@@ -20,7 +20,7 @@ export function AppLayout({ children }: AppLayoutProps) {
     if (user?.role === 'ADMIN') {
       return (
         <>
-          <NavLink component={RouterNavLink} to="/admin/dashboard" label="Dashboard" leftSection={<IconGauge style={{ color: 'blue' }} size="1rem" stroke={1.5} />} />
+          <NavLink component={RouterNavLink} to="/dashboard" label="Dashboard" leftSection={<IconGauge style={{ color: 'blue' }} size="1rem" stroke={1.5} />} />
           <NavLink
                 label="Data Master"
                 leftSection={<IconSettings size="1rem" stroke={1.5} style={{ color: 'blue' }} />}

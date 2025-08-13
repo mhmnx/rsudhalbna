@@ -400,6 +400,16 @@ class MasterPerilakuKerjaViewSet(viewsets.ModelViewSet):
     serializer_class = MasterPerilakuKerjaSerializer
     permission_classes = [IsAdminUser] # Terapkan hak akses khusus Admin
 
+class PublicMasterPerilakuKerjaViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    ViewSet read-only untuk menampilkan data Master Perilaku Kerja
+    kepada semua pengguna yang sudah login.
+    """
+    queryset = MasterPerilakuKerja.objects.all()
+    serializer_class = MasterPerilakuKerjaSerializer
+    permission_classes = [permissions.IsAuthenticated] # Untuk semua user terotentikasi
+
+
 class RencanaAksiViewSet(viewsets.ModelViewSet):
     queryset = RencanaAksi.objects.all()
     serializer_class = RencanaAksiSerializer # Menggunakan serializer yang sudah kita perbaiki

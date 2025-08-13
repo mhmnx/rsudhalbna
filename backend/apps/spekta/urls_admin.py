@@ -4,6 +4,13 @@ from .views import DashboardStatsView
 # apps/spekta/urls_admin.py
 from .views import  MonitoringPegawaiView # Impor view baru
 from .views import DashboardStatsView, MonitoringPegawaiView, ExportMonitoringExcelView # Impor view baru
+from .views import MasterPerilakuKerjaViewSet
+from rest_framework.routers import DefaultRouter
+
+
+router = DefaultRouter()
+# TAMBAHKAN PENDAFTARAN ROUTER DI SINI
+router.register(r'master-perilaku', MasterPerilakuKerjaViewSet, basename='masterperilaku-admin')
 
 
 urlpatterns = [
